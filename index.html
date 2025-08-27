@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zuari Finserv | Explore & Invest in Top Mutual Funds</title>
+    <meta name="description" content="Zuari Finserv empowers your investment decisions with facts, data, and powerful tools, backed by a 50+ year legacy of trust.">
+    <meta name="keywords" content="zuari finserv, mutual funds, sip, invest, distributor, facts, data, large cap, elss">
+    <meta property="og:title" content="Zuari Finserv | Explore & Invest in Top Mutual Funds">
+    <meta property="og:description" content="Empower your investment decisions with facts, data, and powerful tools from Zuari Finserv.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=1350&q=80">
+    <meta property="og:url" content="https://www.zuarifinserv.com">
+    <meta property="og:type" content="website">
+
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <main>
+        <section class="hero visible">
+    <header class="hero-header">
+        <div class="container header-container">
+            <div class="logo"><img src="images/ZMLogo.jpg"></div>
+            <div class="header-buttons">
+                <button class="download-button" id="downloadKit">
+                    <i class="fas fa-download"></i> Start Today
+                </button>
+                <button class="cta-button">Get Free Investment Plan</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Background Image -->
+    
+    <img src="images/hero-banner-2.png" alt="Hero Banner" class="hero-bg" id="heroImage">
+    
+
+    <!-- <div class="container">
+        <div style="text-align: center; margin-top: 40px; margin-bottom: 30px;">
+            <h1 style="font-size: 2.8rem; font-weight: 800; color: green; margin-bottom: 12px;">
+                Start Early. Win Big.
+            </h1>
+            <br>
+            <p style="font-size: 1.35rem; color: #222; font-weight: 600; margin-bottom: 0; text-align: center; max-width: 600px; margin-left: auto; margin-right: auto;">
+                Every day you delay, your future shrinks.
+            </p>
+        </div> -->
+
+        <!-- NEWLY ADDED HERO BANNER -->
+        <!-- <div class="hero-missed-opportunity-banner">
+            <div class="hero-banner-title">
+                <i class="fas fa-exclamation-triangle"></i> MISSED OPPORTUNITY ALERT! <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <p class="hero-banner-text">
+                If you started investing with us 5 years ago, your 
+                <span class="highlight-sip">₹5000/month SIP</span>
+                 would be worth 
+                <span class="highlight-amount">₹12.5 LAKHS</span>
+                 today!
+            </p>
+            <p class="hero-banner-cta">Don't wait another day - Start building wealth NOW!</p>
+        </div> -->
+        <!-- END OF NEW HERO BANNER -->
+         
+
+        <!-- <button class="cta-button-center">Explore Your Options</button> -->
+    <!-- </div> -->
+</section>
+
+
+        
+        <section id="compounding" class="compounding-section">
+            <div class="container two-column-layout">
+                <div class="column-text">
+                    <h2>Visualize the Power of Compounding</h2>
+                    <p><span style="font-weight:bold; color:green;">It's not magic, it’s mathematics.</span> This chart shows how a consistent monthly investment (SIP) of ₹10,000 could grow over time. The key is starting early and staying invested.</p>
+                    <p style="font-size:0.9rem; color:var(--text-light)">*Graph assumes an illustrative annual return of 12% and is for informational purposes only.</p>
+                    <button class="cta-button" style="margin-top: 20px;">Let's Start→</button>
+                </div>
+                <div class="compounding-graph" id="compoundingGraph">
+                    <div class="bar-wrapper">
+                        <span class="bar-value">₹8.2L</span>
+                        <div class="bar bar-5"></div>
+                        <div class="bar-label">5 Yrs</div>
+                    </div>
+                    <div class="bar-wrapper">
+                        <span class="bar-value">₹23L</span>
+                        <div class="bar bar-10"></div>
+                        <div class="bar-label">10 Yrs</div>
+                    </div>
+                    <div class="bar-wrapper">
+                        <span class="bar-value">₹50L</span>
+                        <div class="bar bar-15"></div>
+                        <div class="bar-label">15 Yrs</div>
+                    </div>
+                    <div class="bar-wrapper">
+                        <span class="bar-value">₹1Cr</span>
+                        <div class="bar bar-20"></div>
+                        <div class="bar-label">20 Yrs</div>
+                    </div>
+                </div>
+            </div>
+            
+        </section>
+        <section id="fund-explorer" class="fund-explorer-section">
+            <div class="container">
+                <h2 class="section-title">See How Your Money Could Have Grown</h2>
+                <p class="section-subtitle">We provide transparent performance data to help you research and compare. The choice is always yours.</p>
+                  
+                <div class="tabs-nav">
+                    <button class="tab-button active" data-tab="large-cap">Large Cap</button>
+                    <button class="tab-button" data-tab="flexi-cap">Flexi Cap</button>
+                    <button class="tab-button" data-tab="elss">Small Cap</button>
+                </div>
+
+                <!-- YELLOW BANNER ADDED HERE -->
+              
+
+                <!-- END OF YELLOW BANNER -->
+
+                <div id="large-cap" class="tab-content active">
+                    <div class="table-container">
+                        <table class="funds-table">
+                            <thead><tr><th>Fund Name</th><th>3Y Return (p.a.)</th><th>5Y Return (p.a.)</th><th>Since Inception (p.a.)</th></tr></thead>
+                            <tbody>
+                                <tr><td>ICICI Prudential Bluechip</td><td class="positive">22.3%</td><td class="positive">18.2%</td><td class="positive highlight"><i class="fas fa-star"></i> 17.5%</td></tr>
+                                <tr><td>SBI BlueChip Fund</td><td class="positive">21.1%</td><td class="positive">17.9%</td><td class="positive highlight"><i class="fas fa-star"></i> 15.8%</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="flexi-cap" class="tab-content">
+                     <div class="table-container">
+                        <table class="funds-table">
+                            <thead><tr><th>Fund Name</th><th>3Y Return (p.a.)</th><th>5Y Return (p.a.)</th><th>Since Inception (p.a.)</th></tr></thead>
+                            <tbody>
+                                <tr><td>Parag Parikh Flexi Cap</td><td class="positive">24.7%</td><td class="positive">23.8%</td><td class="positive highlight"><i class="fas fa-star"></i> 19.1%</td></tr>
+                                <tr><td>Quant Flexi Cap Fund</td><td class="positive">30.5%</td><td class="positive">33.5%</td><td class="positive highlight"><i class="fas fa-star"></i> 25.2%</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="elss" class="tab-content">
+                     <div class="table-container">
+                        <table class="funds-table">
+                            <thead><tr><th>Fund Name</th><th>3Y Return (p.a.)</th><th>5Y Return (p.a.)</th><th>Since Inception (p.a.)</th></tr></thead>
+                            <tbody>
+                                <tr><td>DSP Small Cap Fund</td><td class="positive">32.1%</td><td class="positive">34.5%</td><td class="positive highlight"><i class="fas fa-star"></i> 26.3%</td></tr>
+                                <tr><td>Bundhan Small Cap Fund</td><td class="positive">19.8%</td><td class="positive">17.1%</td><td class="positive highlight"><i class="fas fa-star"></i> 21.4%</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="disclaimer">For informational purposes only. Past performance does not guarantee future returns. Mutual fund investments are subject to market risks.</div>
+                <!-- <div class="missed-opportunity-banner-blue">
+                    <div class="missed-opportunity-title">
+                    <i class="fas fa-lightbulb"></i>YOUR MISSED OPPORTUNITY:
+                    </div>
+                     <p>
+                     If you had invested ₹5,000/month in our Small Cap fund 5 years ago, you would have 
+                     <span id="highlight-value" class="highlight-value">₹0</span>
+                     instead of ₹3 lakhs in your savings account!
+                     </p>
+  
+                     <p>
+                        <strong>
+                     Your Savings Account: ₹3 Lakh. <br>Mutual Funds: ₹15.8 Lakh.<br> Where do you want to be?
+                        </strong>
+                    </p>
+  
+                </div> -->
+                <div class="fund-cta-outro">
+                    <!-- <h3>Your money could have become <strong style="font-size: 2.2rem;">2X</strong> in 3 years.</h3> -->
+                     <h3>In Just 3 Years, Smart Investors Doubled Their Money. <span style="font-weight:bold; color:rgb(107, 247, 107);">The next 3 years could be yours.</span></h3>
+                    <p style="color:rgba(255,255,255,0.8); margin-bottom:25px;">Based on the proven 3-year CAGR of select funds — the next 3 years could be even bigger. Are you in?</p>
+                    <button class="cta-button" style="background-color: var(--accent-color); color: var(--primary-color);">Get Free Wealth Plan →</button>
+                </div>
+                <div class="parallel-videos-container">
+                    <!-- <div class="video-placeholder-small cta-button">
+                        <video width="300" height="300" controls>
+                        <source src="videos/what-is-sip.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                        </video>
+                    </div> -->
+                    <!-- <div class="video-placeholder-small ">
+                        <video width="300" height="300" autoplay loop muted playsinline controls>
+                        <source src="videos/sip.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+
+                    </div> -->
+                    <!-- <div class="video-placeholder-small cta-button">
+                        <video width="300" height="300" controls>
+                        <source src="videos/what-is-sip.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                        </video>
+                    </div> -->
+                </div>
+            </div>
+        </section>
+        <!-- FOMO Investment Growth Section -->
+<section style="padding: 3rem 1rem; background: #fafafa; text-align: center;">
+  <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;">
+    If You Had Invested ₹1 Lakh 5 Years Ago…
+  </h2>
+  <p style="color: #555; margin-bottom: 2rem; font-size: 1.1rem;">
+    Your Money Could’ve Been Working Harder — See the Gains You Left on the Table.
+  </p>
+
+  <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem;">
+    <!-- Equity Card -->
+    <div class="fomo-card" style="background: linear-gradient(135deg,#6a11cb,#2575fc);">
+      <div class="fomo-icon">📈</div>
+      <h2 style="color: white;">Equity</h2>
+      <p style="color: white;font-size: 2.0rem;"><b>₹1 lakh → ₹1.8 lakh (+80%)</b></p>
+      <h3 style="color: white;">Where risk meets reward</h3>
+    </div>
+
+    <!-- Hybrid Card -->
+    <div class="fomo-card" style="background: linear-gradient(135deg,#06beb6,#48b1bf);">
+      <div class="fomo-icon">⚖</div>
+      <h2 style="color: white;">Hybrid</h2>
+      <p style="color: white;font-size: 2.0rem;"><b>₹1 lakh → ₹1.56 lakh (+56%)</b></p>
+      <h3 style="color: white;">Balance of safety & growth</h3>
+    </div>
+
+    <!-- Debt Card -->
+    <div class="fomo-card" style="background: linear-gradient(135deg,#f7971e,#ffd200);">
+      <div class="fomo-icon">💰</div>
+      <h2 style="color: white;">Debt</h2>
+      <p style="color: white;font-size: 2.0rem;"><b>₹1 lakh → ₹1.34 lakh (+34%)</b></p>
+      <h3 style="color: white;">Steady wins the race</h3>
+    </div>
+  </div>
+</section>
+        
+
+        <section class="fund-explorer-container" aria-labelledby="explorer-title">
+        <div class="container">
+            <h2 id="explorer-title" class="section-title"><B>See Your Wealth Take Shape</B></h2>
+            <p class="section-subtitle" >Your money’s growth story starts the moment you act.</p>
+
+            <div class="explorer-layout">
+                <!-- Feature 1: Market Growth Graph -->
+                <div class="graph-container" role="figure" aria-label="Market Growth from 2015 to 2025">
+                    <canvas id="marketGrowthChart"></canvas>
+                </div>
+
+                <!-- Feature 2: Investment Simulator -->
+                <div class="simulator-container">
+                    <h3 class="simulator-title">Investment Simulator</h3>
+                    <p>See how your investment could have grown. Select a category, amount, and start year.</p>
+
+                    <div class="category-selector" role="radiogroup" aria-labelledby="category-label">
+                        <span id="category-label" class="sr-only">Select Fund Category</span>
+                        <button class="category-btn active" role="radio" aria-checked="true" data-cagr="0.10" data-category="Large Cap">Large Cap</button>
+                        <button class="category-btn" role="radio" aria-checked="false" data-cagr="0.14" data-category="Mid Cap">Mid Cap</button>
+                        <button class="category-btn" role="radio" aria-checked="false" data-cagr="0.18" data-category="Small Cap">Small Cap</button>
+                    </div>
+
+                    <div class="simulator-inputs">
+                        <div class="input-group">
+                            <label for="investmentAmount">Amount (₹)</label>
+                            <input type="number" id="investmentAmount" placeholder="e.g., 50000" min="1000" step="1000" value="50000">
+                        </div>
+                        <div class="input-group">
+                            <label for="startYear">Start Year</label>
+                            <select id="startYear">
+                                <!-- Options will be populated by JS -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="result-box" id="resultBox" aria-live="polite">
+                        <p class="result-label">Value by 2025 would be:</p>
+                        <p class="result-amount" id="finalAmount">₹0</p>
+                        <div class="result-details">
+                            <div class="detail-item">
+                                <span>Total Return</span>
+                                <strong id="totalReturn">0%</strong>
+                            </div>
+                            <div class="detail-item">
+                                <span>CAGR Used</span>
+                                <strong id="cagrUsed">0%</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center; margin-top: 40px;">
+            <button class="cta-button">Show Me How to Start</button>
+        </div>
+    </section>
+    <!-- <section class="opportunity-section">
+  <h2 class="opportunity-title">Growth You Could Have Had</h2>
+  <p class="opportunity-subtitle">See how ₹1 lakh could have grown in 5 years</p>
+
+  <div class="opportunity-cards">
+    <div class="opportunity-card">
+      <div class="opportunity-icon">📈</div>
+      <h3 class="opportunity-type">Equity</h3>
+      <p class="opportunity-text">₹1 lakh in 2019 → <span class="highlight">₹80k richer</span> today</p>
+    </div>
+
+    <div class="opportunity-card">
+      <div class="opportunity-icon">⚖</div>
+      <h3 class="opportunity-type">Hybrid</h3>
+      <p class="opportunity-text">₹1 lakh → <span class="highlight">₹56k</span> in 5 years</p>
+    </div>
+
+    <div class="opportunity-card">
+      <div class="opportunity-icon">💰</div>
+      <h3 class="opportunity-type">Debt</h3>
+      <p class="opportunity-text">₹1 lakh → <span class="highlight">₹34k growth</span> (beats savings)</p>
+    </div>
+  </div>
+</section> -->
+
+
+<!-- Popup Modal -->
+<div id="fomoModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+  background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:1000;">
+  <div style="background:white; padding:2rem; border-radius:10px; max-width:350px; text-align:center;">
+    <h3 style="margin-bottom:1rem;">Your Future Could Look Like This</h3>
+    <p style="margin-bottom:1rem;">Every day you delay could be costing you future gains. Start today.</p>
+    <button onclick="document.getElementById('fomoModal').style.display='none'"
+      style="padding:0.6rem 1.2rem; background:#2575fc; color:white; border:none; border-radius:5px; cursor:pointer;">
+      Got It
+    </button>
+  </div>
+</div>
+    <!-- HTML -->
+
+
+
+
+        <section id="why-us">
+            <div class="container two-column-layout">
+                <div class="column-text">
+                    <h2 style="text-align: left;">The Zuari Finserv Advantage</h2>
+                    <p>As AMFI-registered distributors, we believe in empowering you. We combine technology with genuine, human support to make the investment process transparent and straightforward.</p>
+                    <ul class="why-us-list">
+                        <li><i class="fas fa-shield-alt"></i><div><strong>Backed by a Legacy of Trust</strong><br>50+ years of financial expertise so your money is always in safe hands.</div></li>
+                        <li><i class="fas fa-chart-line"></i><div><strong>Access to Top-Tier Funds</strong><br>Handpicked mutual funds from India’s top AMCs to maximize your growth potential.</div></li>
+                        <li><i class="fas fa-hands-helping"></i><div><strong>Support When You Need It</strong><br>From queries to portfolio advice – our experts are just a call or click away, 24/7.</div></li>
+                    </ul>
+                </div>
+                <div class="column-image">
+                    <img src="images/illustarion.png" alt="Financial Growth Chart">
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 1px;">
+                <button class="cta-button">
+                     Explore Funds Now
+                </button>
+            </div>
+        </section>
+        <!-- <section class="roadmap-section">
+  <h2 class="roadmap-title">Real-Life Milestone Mapping</h2>
+  <p class="roadmap-subtitle">Watch how a simple SIP can transform into a dream vacation, a car, or even your first home. Your small steps today, giant milestones tomorrow!</p>
+
+  <div class="roadmap-container">
+    <div class="roadmap-item" data-text="Europe Trip">
+      <div class="roadmap-icon">
+        ✈️
+      </div>
+      <div class="roadmap-amount">₹5,000/month</div>
+      <div class="roadmap-goal">Europe Trip</div>
+    </div>
+
+    <div class="roadmap-item" data-text="Car Upgrade">
+      <div class="roadmap-icon">
+        🚗
+      </div>
+      <div class="roadmap-amount">₹10,000/month</div>
+      <div class="roadmap-goal">Car Upgrade</div>
+    </div>
+
+    <div class="roadmap-item" data-text="Child's College Fees">
+      <div class="roadmap-icon">
+    🏠
+</div>
+
+      <div class="roadmap-amount">₹25,000/month</div>
+      <div class="roadmap-goal">Your Dream House</div>
+    </div>
+  </div>
+</section> -->
+<!-- HTML -->
+<!-- <section class="webinar-section">
+  <div class="webinar-content">
+    <h2>Join Our Upcoming Webinar</h2>
+    
+    <div style="text-align: left; max-width: 500px; margin: 0 auto;">
+  <ul style="list-style: none; padding: 0; margin: 0; font-size: 16px; line-height: 2;">
+    <li>🚀 How ₹1 lakh can turn into ₹X with the right strategy</li>
+    <li>💡 The 3 mistakes that kill investor returns (and how to avoid them)</li>
+    <li>📈 The proven formula to grow wealth without FOMO or fear</li>
+  </ul>
+</div>
+
+
+  </div>
+
+  <div class="webinar-card">
+    <h3>Live in:</h3>
+    <div class="countdown">
+      <div><span id="days">00</span><small>Days</small></div>
+      <div><span id="hours">00</span><small>Hours</small></div>
+      <div><span id="minutes">00</span><small>Mins</small></div>
+      <div><span id="seconds">00</span><small>Sec</small></div>
+    </div>
+    <button class="cta-button">Save My Seat (Free)</button>
+    <p class="webinar-fomo">Don't miss your chance — last few spots remaining!</p>
+  </div>
+</section> -->
+
+        
+            
+
+        
+        
+        
+        <section id="mythbusters" class="mythbusters-section" style="background-color: var(--bg-light);">
+            <div class="container">
+                <h2 class="section-title">Busting Common Investment Myths</h2>
+                <p class="section-subtitle">Don't let misinformation hold you back. Click on each myth to reveal the fact and invest with clarity.</p>
+                <div class="accordion-item">
+                    <div class="accordion-header"><strong>“You need lakhs to start investing.”</strong><i class="fas fa-chevron-down"></i></div>
+                    <div class="accordion-content"><p>Fact: You can start with just ₹500 a month through a Systematic Investment Plan (SIP). Consistency is more important than a large initial amount.</p></div>
+                </div>
+                <div class="accordion-item">
+                    <div class="accordion-header"><strong>“Mutual Funds are only for experts.”</strong><i class="fas fa-chevron-down"></i></div>
+                    <div class="accordion-content"><p>Fact: As distributors, we provide the facts and figures on professionally managed funds, so you don't have to be an expert to get started.</p></div>
+                </div>
+                 <div class="accordion-item">
+                    <div class="accordion-header"><strong>“You must time the market to succeed.”</strong><i class="fas fa-chevron-down"></i></div>
+                    <div class="accordion-content"><p>Fact: SIPs are designed to avoid the need for market timing. By investing regularly, you buy more units when prices are low and fewer when they are high, averaging your cost over time.</p></div>
+                </div>
+                 <div class="accordion-item">
+                    <div class="accordion-header"><strong>“You have to watch the market every day.”</strong><i class="fas fa-chevron-down"></i></div>
+                    <div class="accordion-content"><p>Fact: Mutual funds are managed by professional fund managers. Your role is to remain invested for the long term, not to track daily market movements.</p></div>
+                </div>
+                 <div class="accordion-item">
+                    <div class="accordion-header"><strong>“You can lose all your money in Mutual Funds.”</strong><i class="fas fa-chevron-down"></i></div>
+                    <div class="accordion-content"><p>Fact: While all investments carry risk, mutual funds are diversified across many stocks, which significantly reduces the risk of losing your entire investment compared to buying a single stock.</p></div>
+                </div>
+                <div style="text-align:center; margin-top: 40px;">
+                    <button class="cta-button">More Questions?</button>
+                </div>
+            </div>
+        </section>
+
+        
+        <section class="testimonials-section">
+            <div class="container">
+                <h2 class="section-title">What Our Clients Say</h2>
+                <p class="section-subtitle">Real stories from real people who achieved their financial goals with us</p>
+                <div class="testimonials-grid">
+                    <div class="testimonial-card">
+                        <div class="testimonial-stars">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <p class="testimonial-text">"Started with ₹2000 SIP 5 years ago. Today my portfolio is worth ₹8.5 lakhs! Zuari's guidance made all the difference."</p>
+                        <p class="testimonial-author">Rajesh Kumar</p>
+                        <p class="testimonial-author-title">IT Professional</p>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="testimonial-stars">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <p class="testimonial-text">"As a single mother, I was worried about my daughter's education. Zuari helped me choose the right funds and now I'm confident about her future."</p>
+                        <p class="testimonial-author">Priya Sharma</p>
+                        <p class="testimonial-author-title">Teacher</p>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="testimonial-stars">
+                           <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <p class="testimonial-text">"The team's expertise and transparent approach convinced me. My retirement corpus has grown beyond my expectations in just 3 years."</p>
+                        <p class="testimonial-author">Amit Patel</p>
+                        <p class="testimonial-author-title">Business Owner</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+         <section style="text-align: center; margin: -50px 0;">
+    <h2 style="font-size: 2.0rem; font-weight: bold; color: #003580; margin-bottom: 15px;">
+         It’s Never Too Late to Start Your Mutual Fund Journey
+    </h2>
+    <p style="font-size: 1.1rem; color: #333; margin-bottom: 25px; line-height: 1.5; max-width: 600px; margin-left: auto; margin-right: auto;">
+        No matter your age or market timing, smart investing can still grow your wealth. Learn how starting today can make a big difference for your future.
+    </p>
+    <div class="video-placeholder-small">
+        <video width="300" height="300" autoplay loop muted playsinline controls>
+            <source src="videos/HISTROY DATA BASED VIDEO.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+</section>
+
+        <section id="final-cta" class="final-cta">
+            <div class="container">
+                <h2>Empower Your Financial Future <span style="font-weight:bold; color:rgb(107, 247, 107);">Today</span></h2>
+                <p>The journey to wealth creation begins with a single, informed step. Let Zuari Finserv provide the tools and support you need to start investing with confidence.</p>
+                <button class="cta-button" style="background-color: var(--white); color: var(--primary-color);">Get Free Investment Plan</button>
+            </div>
+        </section>
+    </main>
+    
+    <div class="lead-modal" id="leadModal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeBtn">&times;</span>
+            <div id="form-container">
+                
+                <h3>Get Free Investment Plan</h3>
+                <p>A Zuari Finserv representative will call you to clarify your questions and help you understand your investment options.</p>
+                
+                
+                <form class="modal-form" id="leadForm">
+                    <input type="text" name="name" placeholder="Full Name" required>
+                    <input type="tel" name="phone" placeholder="Mobile Number" required pattern="[0-9]{10}">
+                    <!-- <small style="color:#777;font-size:12px;margin-bottom: 100px;">
+                    We’ll never share your number. No spam, only expert advice.
+                    </small> -->
+
+
+
+                    <button type="submit" class="cta-button">Get Free Investment Plan</button>
+                    
+                </form>
+                <p style="font-size:14px;color:#333;margin-bottom:8px;">
+💬 Trusted by <strong>8,000+ investors</strong> to grow their wealth.
+</p>
+
+                <p style="color:#E53935;font-weight:bold;font-size:14px;margin-top:8px;">
+⏳ Limited free consultation slots available this week!
+</p>
+
+
+            </div>
+            <div class="confirmation-message" id="confirmationMessage">
+                <i class="fas fa-check-circle" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                <p>Thank you! A Zuari Finserv representative will call you shortly.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed-bottom-bar">
+        <div class="container">
+            <form class="bottom-bar-form" id="bottomBarForm">
+                <input type="text" name="name" placeholder="Your Name" required>
+                <input type="tel" name="phone" placeholder="Your Phone Number" required pattern="[0-9]{10}">
+                <button type="submit" class="cta-button">Request a Call Back</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- <div class="fixed-video-placeholder cta-button">
+        <video width="500" height="500" controls autoplay muted loop >
+            <source src="videos/sip.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div> -->
+
+    <script src="script.js" defer></script>
+</body>
+</html>

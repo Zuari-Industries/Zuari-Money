@@ -118,52 +118,52 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Lead form submission with async fetch to /api/submit
-  if (leadForm) {
-    leadForm.addEventListener('submit', async (ev) => {
-      ev.preventDefault();
-      const name = (leadForm.name?.value || '').trim();
-      const phone = (leadForm.phone?.value || '').trim();
-      if (!name || !/^[0-9]{10}$/.test(phone)) {
-        alert('Please enter a valid name and 10-digit phone number.');
-        return;
+if (leadForm) {
+  leadForm.addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const name = (leadForm.name?.value || '').trim();
+    const phone = (leadForm.phone?.value || '').trim();
+
+    // quick validation
+    if (!name || !/^[0-9]{10}$/.test(phone)) {
+      alert('Please enter a valid name and 10-digit phone number.');
+      return;
+    }
+
+    const submitButton = leadForm.querySelector('button[type="submit"]');
+    const originalText = submitButton?.textContent || '';
+
+    try {
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent = 'Submitting...';
       }
-      const submitButton = leadForm.querySelector('button[type="submit"]');
-      const originalText = submitButton ? submitButton.textContent : '';
-      try {
-        if (submitButton) { submitButton.disabled = true; submitButton.textContent = 'Submitting...'; }
-        const res = await fetch('/api/submit', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, phone })
-        });
-        const data = await res.json().catch(() => ({}));
-        if (data && data.success) {
-          if (formContainer && confirmationMessage) {
-            formContainer.style.display = 'none';
-            confirmationMessage.style.display = 'block';
-          }
-        } else {
-          // show confirmation anyway but log error
-          console.warn('Lead submission returned error:', data);
-          if (formContainer && confirmationMessage) {
-            formContainer.style.display = 'none';
-            confirmationMessage.style.display = 'block';
-          }
-        }
-      } catch (err) {
-        console.error('Error submitting lead form', err);
-        if (formContainer && confirmationMessage) {
-          formContainer.style.display = 'none';
-          confirmationMessage.style.display = 'block';
-        }
-      } finally {
-        if (leadForm) leadForm.reset();
-        if (submitButton) { submitButton.disabled = false; submitButton.textContent = originalText; }
-        // close modal after short delay to let user read confirmation
-        setTimeout(() => closeModal(), 1200);
+
+      // fire-and-forget request (don’t block UI for response)
+      fetch('/api/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, phone })
+      }).catch(err => console.error("Lead submit failed:", err));
+
+      // immediately show confirmation (don’t wait for server)
+      if (formContainer && confirmationMessage) {
+        formContainer.style.display = 'none';
+        confirmationMessage.style.display = 'block';
       }
-    });
-  }
+
+    } finally {
+      if (leadForm) leadForm.reset();
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = originalText;
+      }
+      // faster close – 600ms is enough for user to see it
+      setTimeout(() => closeModal(), 600);
+    }
+  });
+}
+
 
   /* =========================
      UI: accordion, tabs, observers

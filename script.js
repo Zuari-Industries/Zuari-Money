@@ -1,486 +1,487 @@
-// --- GOOGLE SHEETS SUBMISSION (Your Original Code) ---
-const leadForm = document.getElementById('leadForm');
-const formContainer = document.getElementById('form-container');
-const confirmationMessage = document.getElementById('confirmationMessage');
+/* ------------------------------------------------------------------
+   Unified script: lead form, modal, UI widgets, Chart + simulator
+   - Requires Chart.js to be loaded on the page.
+   - Keeps element IDs/classes you used:
+     #marketGrowthChart, .category-btn, #investmentAmount, #startYear,
+     #resultBox, #finalAmount, #totalReturn, #cagrUsed, #leadForm, #leadModal
+   ------------------------------------------------------------------ */
+document.addEventListener('DOMContentLoaded', () => {
+  'use strict';
 
-// This event listener is attached directly to the form, so it can be outside DOMContentLoaded
-// --- ENHANCED DOWNLOAD WITH LEAD CAPTURE ---
-// --- FILE DOWNLOAD FUNCTIONALITY ---
-// const downloadButton = document.getElementById('downloadKit');
-// if (downloadButton) {
-//     downloadButton.addEventListener('click', () => {
-//         // Method 1: Direct file download (recommended)
-//         const link = document.createElement('a');
-//         link.href = 'assets/Zuari-Finserv-Mutual-Fund-Starter-Kit.pdf'; // Your file path
-//         link.download = 'Zuari-Finserv-Mutual-Fund-Starter-Kit.pdf';
-//         document.body.appendChild(link);
-//         link.click();
-//         document.body.removeChild(link);
-        
-//         // Optional: Track download event
-//         console.log('Starter Kit downloaded');
-        
-//         // Optional: Show success message
-//         alert('Thank you! Your Mutual Fund Starter Kit is downloading now.');
-        
-//         // Optional: Also open modal for lead capture
-//         // openModal(); // Uncomment if you want to capture lead info after download
-//     });
-// }
+  /* =========================
+     Config / helpers
+     ========================= */
+  const START_YEAR = 2015;
+  const CURRENT_YEAR = new Date().getFullYear();
+  const YEARS = Array.from({ length: CURRENT_YEAR - START_YEAR + 1 }, (_, i) => START_YEAR + i);
 
+  const baseNiftySamples = [10000, 11000, 12500, 13000, 15000, 14000, 18000, 21000, 20000, 24000, 25000]; // 2015..2025 seed
 
-if (leadForm) {
-    leadForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
+  const fmtINR = (v) => '₹' + Number(v).toLocaleString('en-IN', { maximumFractionDigits: 0 });
+  const safeParseNumber = (str) => {
+    if (typeof str === 'number') return Number(str);
+    if (!str && str !== 0) return NaN;
+    // allow comma separators
+    return parseFloat(String(str).replace(/,/g, '').trim());
+  };
+  const parseCagr = (v) => {
+    if (v == null) return NaN;
+    let s = String(v).trim();
+    if (s.endsWith('%')) s = s.slice(0, -1);
+    const n = safeParseNumber(s);
+    if (!isFinite(n)) return NaN;
+    // convert percent like "10" -> 0.10; if already decimal (0.10) keep as is
+    if (n > 1) return n / 100;
+    return n;
+  };
 
-      const name = leadForm.name.value.trim();
-      const phone = leadForm.phone.value.trim();
+  function buildNiftyData(years, seedArray) {
+    // returns array length === years.length
+    const result = seedArray.slice();
+    if (result.length >= years.length) return result.slice(0, years.length).map(Math.round);
+    // extend by approximating last growth rate
+    let last = result[result.length - 1] || 10000;
+    const prev = result[result.length - 2] || last;
+    let approxCagr = prev > 0 ? (last / prev) - 1 : 0.08;
+    if (!isFinite(approxCagr) || approxCagr <= -1) approxCagr = 0.08;
+    while (result.length < years.length) {
+      last = last * (1 + approxCagr);
+      result.push(Math.round(last));
+    }
+    return result.map(Math.round);
+  }
 
-      if (!name || !phone.match(/^[0-9]{10}$/)) {
+  function computeHighlightIndices(years, highlights = [2019, 2022, CURRENT_YEAR]) {
+    return highlights.map(y => years.indexOf(y)).filter(i => i >= 0);
+  }
+
+  /* =========================
+     Element references
+     ========================= */
+  // Lead form & modal elements
+  const leadForm = document.getElementById('leadForm');
+  const formContainer = document.getElementById('form-container');
+  const confirmationMessage = document.getElementById('confirmationMessage');
+  const leadModal = document.getElementById('leadModal');
+  const closeBtn = document.getElementById('closeBtn');
+  const ctaButtons = Array.from(document.querySelectorAll('.cta-button') || []);
+  const bottomBarForm = document.getElementById('bottomBarForm');
+  const heroImage = document.getElementById('heroImage');
+
+  // Chart & simulator elements
+  const chartCanvas = document.getElementById('marketGrowthChart');
+  const simCategoryButtons = Array.from(document.querySelectorAll('.category-btn') || []);
+  const simAmountInput = document.getElementById('investmentAmount');
+  const simYearSelect = document.getElementById('startYear');
+  const simResultBox = document.getElementById('resultBox');
+  const simFinalAmountEl = document.getElementById('finalAmount');
+  const simTotalReturnEl = document.getElementById('totalReturn');
+  const simCagrUsedEl = document.getElementById('cagrUsed');
+
+  /* =========================
+     Lead form + modal logic
+     ========================= */
+  const openModal = () => {
+    if (formContainer && confirmationMessage) {
+      formContainer.style.display = 'block';
+      confirmationMessage.style.display = 'none';
+    }
+    if (leadModal) leadModal.classList.add('show');
+  };
+  const closeModal = () => {
+    if (leadModal) leadModal.classList.remove('show');
+  };
+
+  // Wire CTA buttons (skip those inside forms)
+  ctaButtons.forEach(btn => {
+    if (!btn.closest('form')) btn.addEventListener('click', openModal);
+  });
+  if (heroImage) heroImage.addEventListener('click', openModal);
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+  if (leadModal) leadModal.addEventListener('click', (e) => { if (e.target === leadModal) closeModal(); });
+
+  // bottomBar read-only inputs open modal
+  if (bottomBarForm) {
+    const bottomBarNameInput = bottomBarForm.querySelector('input[name="name"]');
+    const bottomBarPhoneInput = bottomBarForm.querySelector('input[name="phone"]');
+    if (bottomBarNameInput) {
+      bottomBarNameInput.setAttribute('readonly', 'readonly');
+      bottomBarNameInput.addEventListener('click', openModal);
+      bottomBarNameInput.addEventListener('focus', openModal);
+    }
+    if (bottomBarPhoneInput) {
+      bottomBarPhoneInput.setAttribute('readonly', 'readonly');
+      bottomBarPhoneInput.addEventListener('click', openModal);
+      bottomBarPhoneInput.addEventListener('focus', openModal);
+    }
+    bottomBarForm.addEventListener('submit', (ev) => { ev.preventDefault(); openModal(); });
+  }
+
+  // Lead form submission with async fetch to /api/submit
+  if (leadForm) {
+    leadForm.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const name = (leadForm.name?.value || '').trim();
+      const phone = (leadForm.phone?.value || '').trim();
+      if (!name || !/^[0-9]{10}$/.test(phone)) {
         alert('Please enter a valid name and 10-digit phone number.');
         return;
       }
-
       const submitButton = leadForm.querySelector('button[type="submit"]');
-      const originalButtonText = submitButton ? submitButton.textContent : '';
-      if (submitButton) {
-        submitButton.disabled = true;
-        submitButton.textContent = 'Submitting...';
-      }
-
+      const originalText = submitButton ? submitButton.textContent : '';
       try {
-  const response = await fetch('/api/submit', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name, phone })
-  });
-
-  const data = await response.json();
-
-  if (data.success) {
-    formContainer.style.display = 'none';
-    confirmationMessage.style.display = 'block';
-    leadForm.reset();
-  } else {
-    throw new Error(data.error || 'Submission failed');
-  }
-} catch (error) {
-  console.log('Error submitting form:', error);
-  formContainer.style.display = 'none';
-  confirmationMessage.style.display = 'block';
-  leadForm.reset();
-} finally {
-  if (submitButton) {
-    submitButton.disabled = false;
-    submitButton.textContent = originalButtonText;
-  }
-}
-
-    });
-}
-
-
-// --- MAIN DOM CONTENT LOADED EVENT LISTENER ---
-document.addEventListener('DOMContentLoaded', () => {
-    // --- MODAL AND FORM LOGIC (Your Original Code) ---
-    const leadModal = document.getElementById('leadModal');
-    const closeBtn = document.getElementById('closeBtn');
-    const ctaButtons = document.querySelectorAll('.cta-button');
-    const bottomBarForm = document.getElementById('bottomBarForm');
-    const heroImage = document.getElementById('heroImage');
-    
-    const openModal = () => {
-        const formContainer = document.getElementById('form-container');
-        const confirmationMessage = document.getElementById('confirmationMessage');
-        if (formContainer && confirmationMessage) {
-            formContainer.style.display = 'block';
-            confirmationMessage.style.display = 'none';
-        }
-        if (leadModal) {
-            leadModal.classList.add('show');
-        }
-    };
-    const closeModal = () => {
-        if (leadModal) {
-            leadModal.classList.remove('show');
-        }
-    };
-    
-    ctaButtons.forEach(button => {
-        if (!button.closest('form')) {
-            button.addEventListener('click', openModal);
-        }
-    });
-    if (heroImage) {
-        heroImage.addEventListener('click', openModal);
-    }
-    if(closeBtn) closeBtn.addEventListener('click', closeModal);
-    if(leadModal) leadModal.addEventListener('click', (e) => {
-        if (e.target === leadModal) closeModal();
-    });
-
-    if (bottomBarForm) {
-        const bottomBarNameInput = bottomBarForm.querySelector('input[name="name"]');
-        const bottomBarPhoneInput = bottomBarForm.querySelector('input[name="phone"]');
-        
-        if (bottomBarNameInput) {
-            bottomBarNameInput.setAttribute('readonly', 'readonly');
-            bottomBarNameInput.addEventListener('click', openModal);
-            bottomBarNameInput.addEventListener('focus', openModal);
-        }
-        
-        if (bottomBarPhoneInput) {
-            bottomBarPhoneInput.setAttribute('readonly', 'readonly');
-            bottomBarPhoneInput.addEventListener('click', openModal);
-            bottomBarPhoneInput.addEventListener('focus', openModal);
-        }
-        bottomBarForm.addEventListener('submit', (event) => {
-            event.preventDefault();
-            openModal();
+        if (submitButton) { submitButton.disabled = true; submitButton.textContent = 'Submitting...'; }
+        const res = await fetch('/api/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, phone })
         });
-    }
-
-    // This is a simplified UI handler for the modal form, separate from the Google Sheets logic
-    const handleFormSubmit = (event) => {
-        event.preventDefault();
-        // The actual submission is handled by the listener at the top of the file.
-        // This function just provides UI feedback.
-        const formContainer = document.getElementById('form-container');
-        const confirmationMessage = document.getElementById('confirmationMessage');
-        
-        if (formContainer && confirmationMessage) {
-            console.log('Displaying confirmation for:', {
-                name: event.target.elements.name.value,
-                phone: event.target.elements.phone.value,
-            });
-            
-            if (!leadModal.classList.contains('show')) {
-                openModal();
-            }
-
+        const data = await res.json().catch(() => ({}));
+        if (data && data.success) {
+          if (formContainer && confirmationMessage) {
             formContainer.style.display = 'none';
             confirmationMessage.style.display = 'block';
-            setTimeout(() => {
-                closeModal();
-                // Reset form UI after modal is fully closed
-                setTimeout(() => formContainer.style.display = 'block', 300);
-            }, 3000);
+          }
+        } else {
+          // show confirmation anyway but log error
+          console.warn('Lead submission returned error:', data);
+          if (formContainer && confirmationMessage) {
+            formContainer.style.display = 'none';
+            confirmationMessage.style.display = 'block';
+          }
         }
-    };
-    
-    // The main leadForm's submit is already handled by the Google Sheets script.
-    // This listener is for UI feedback only.
-    if (document.getElementById('leadForm')) {
-        document.getElementById('leadForm').addEventListener('submit', handleFormSubmit);
-    }
-
-
-    // --- ACCORDION SCRIPT (Your Original Code) ---
-    const accordionItems = document.querySelectorAll('.accordion-item');
-    accordionItems.forEach(item => {
-        const header = item.querySelector('.accordion-header');
-        const content = item.querySelector('.accordion-content');
-        header.addEventListener('click', () => {
-            item.classList.toggle('active');
-            if (item.classList.contains('active')) {
-                content.style.maxHeight = content.scrollHeight + "px";
-            } else {
-                content.style.maxHeight = null;
-            }
-        });
-    });
-    
-    // --- TAB SCRIPT (Your Original Code) ---
-    const tabButtons = document.querySelectorAll('.tab-button');
-    const tabContents = document.querySelectorAll('.tab-content');
-    tabButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            tabButtons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
-            
-            const tabId = button.getAttribute('data-tab');
-            tabContents.forEach(content => {
-                content.classList.toggle('active', content.id === tabId);
-            });
-        });
-    });
-
-    // --- SECTION FADE-IN (Your Original Code) ---
-    const allSections = document.querySelectorAll('section');
-    const sectionObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-                observer.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.1 });
-    allSections.forEach(section => {
-        sectionObserver.observe(section);
-    });
-    
-    // --- COMPOUNDING GRAPH ANIMATION (Your Original Code) ---
-    const compoundingGraph = document.getElementById('compoundingGraph');
-    if (compoundingGraph) {
-        const graphObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('animate');
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.5 });
-        graphObserver.observe(compoundingGraph);
-    }
-
-    // --- POPUP ON SCROLL (Your Original Code) ---
-    let popupShown = false;
-    window.addEventListener('scroll', () => {
-        if (popupShown) return;
-        const scrollPosition = window.scrollY + window.innerHeight;
-        const pageHeight = document.documentElement.scrollHeight;
-        if (scrollPosition / pageHeight >= 0.5) {
-            popupShown = true;
-            if (leadModal && !leadModal.classList.contains('show')) {
-                openModal();
-            }
+      } catch (err) {
+        console.error('Error submitting lead form', err);
+        if (formContainer && confirmationMessage) {
+          formContainer.style.display = 'none';
+          confirmationMessage.style.display = 'block';
         }
+      } finally {
+        if (leadForm) leadForm.reset();
+        if (submitButton) { submitButton.disabled = false; submitButton.textContent = originalText; }
+        // close modal after short delay to let user read confirmation
+        setTimeout(() => closeModal(), 1200);
+      }
     });
+  }
 
-    // --- FIXED: CHART.JS MARKET GROWTH GRAPH LOGIC ---
-    const ctx = document.getElementById('marketGrowthChart');
-    if (ctx) {
-        const years = Array.from({ length: 11 }, (_, i) => 2015 + i);
-        const growthData = [10000, 11000, 12500, 13000, 15000, 14000, 18000, 21000, 20000, 24000, 25000]; // Sample data
+  /* =========================
+     UI: accordion, tabs, observers
+     ========================= */
+  // Accordion
+  const accordionItems = document.querySelectorAll('.accordion-item');
+  accordionItems.forEach(item => {
+    const header = item.querySelector('.accordion-header');
+    const content = item.querySelector('.accordion-content');
+    if (!header || !content) return;
+    header.addEventListener('click', () => {
+      item.classList.toggle('active');
+      if (item.classList.contains('active')) {
+        content.style.maxHeight = content.scrollHeight + 'px';
+      } else {
+        content.style.maxHeight = null;
+      }
+    });
+  });
 
-        const highlightIndices = [years.indexOf(2019), years.indexOf(2022), years.indexOf(2025)];
+  // Tabs
+  const tabButtons = document.querySelectorAll('.tab-button');
+  const tabContents = document.querySelectorAll('.tab-content');
+  tabButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const tabId = btn.getAttribute('data-tab');
+      tabContents.forEach(c => c.classList.toggle('active', c.id === tabId));
+    });
+  });
 
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: years,
-                datasets: [{
-                    label: 'NIFTY 50 INDEX',
-                    data: growthData,
-                    borderColor: 'rgba(77, 255, 0, 0.8)',
-                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                    fill: true,
-                    tension: 0.4,
-                    pointBackgroundColor: (context) => highlightIndices.includes(context.dataIndex) ? 'rgba(255, 250, 99, 1)' : 'rgba(90, 110, 1, 0.8)',
-                    pointRadius: (context) => highlightIndices.includes(context.dataIndex) ? 6 : 4,
-                    pointHoverRadius: 8,
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false, // CHANGED: This was true, now false for better control
-                plugins: {
-                    legend: { 
-                        position: 'top', 
-                        align: 'end', 
-                        labels: { 
-                            boxWidth: 12, 
-                            font: { family: "'Manrope', sans-serif", size: 12 } 
-                        } 
-                    },
-                    tooltip: {
-                        backgroundColor: '#0A2342',
-                        titleFont: { family: "'Manrope', sans-serif", size: 14 },
-                        bodyFont: { family: "'Manrope', sans-serif", size: 12 },
-                        padding: 10,
-                        cornerRadius: 8,
-                        callbacks: { label: (context) => `Index: ${context.parsed.y}` }
-                    }
-                },
-                scales: {
-                    y: { 
-                        grid: { color: '#E5E7EB', borderDash: [5, 5] }, 
-                        ticks: { font: { family: "'Manrope', sans-serif" } }
-                    },
-                    x: { 
-                        grid: { display: false }, 
-                        ticks: { font: { family: "'Manrope', sans-serif" } }
-                    }
-                }
-            }
-        });
+  // Section fade-in observer
+  const allSections = document.querySelectorAll('section');
+  const sectionObserver = new IntersectionObserver((entries, obs) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        obs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  allSections.forEach(s => sectionObserver.observe(s));
+
+  // Compounding graph animation observer
+  const compoundingGraph = document.getElementById('compoundingGraph');
+  if (compoundingGraph) {
+    const gObserver = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate');
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+    gObserver.observe(compoundingGraph);
+  }
+
+  // Popup on scroll once past 50% of page
+  let popupShown = false;
+  window.addEventListener('scroll', () => {
+    if (popupShown) return;
+    const scrollPosition = window.scrollY + window.innerHeight;
+    const pageHeight = document.documentElement.scrollHeight;
+    if ((scrollPosition / pageHeight) >= 0.5) {
+      popupShown = true;
+      if (leadModal && !leadModal.classList.contains('show')) openModal();
     }
+  });
 
-    // --- FIXED: INVESTMENT SIMULATOR LOGIC ---
-    const simCategoryButtons = document.querySelectorAll('.category-btn');
-    const simAmountInput = document.getElementById('investmentAmount');
-    const simYearSelect = document.getElementById('startYear');
-    const simResultBox = document.getElementById('resultBox');
-    const simFinalAmountEl = document.getElementById('finalAmount');
-    const simTotalReturnEl = document.getElementById('totalReturn');
-    const simCagrUsedEl = document.getElementById('cagrUsed');
+  /* =========================
+     Chart.js & Simulator (enhanced)
+     ========================= */
+  // Bail if chart canvas missing or Chart not loaded
+  if (!chartCanvas) {
+    console.warn('Chart canvas (#marketGrowthChart) not found - chart & sim disabled.');
+  } else if (typeof Chart === 'undefined') {
+    console.warn('Chart.js not found. Please include Chart.js before this script.');
+  } else {
+    const chartCtx = chartCanvas.getContext('2d');
 
-    // FIXED: Year dropdown population
+    // build NIFTY data to match YEARS
+    const niftyData = buildNiftyData(YEARS, baseNiftySamples);
+    const highlightIndices = computeHighlightIndices(YEARS);
+
+    // Prepare year select inclusive
     if (simYearSelect) {
-        const currentYear = 2025; // CHANGED: Fixed to 2025 instead of new Date().getFullYear()
-        // Clear existing options first
-        simYearSelect.innerHTML = '';
-        for (let year = 2015; year < currentYear; year++) {
-            const option = document.createElement('option');
-            option.value = year;
-            option.textContent = year;
-            simYearSelect.appendChild(option);
-        }
-        simYearSelect.value = currentYear - 5; // Default to 2020
+      simYearSelect.innerHTML = '';
+      for (let y = START_YEAR; y <= CURRENT_YEAR; y++) {
+        const opt = document.createElement('option');
+        opt.value = String(y);
+        opt.textContent = String(y);
+        simYearSelect.appendChild(opt);
+      }
+      simYearSelect.value = String(Math.max(START_YEAR, 2015));
     }
 
-    const calculateGrowth = () => {
-        if (!simAmountInput || !simYearSelect || !simResultBox) return;
-
-        const principal = parseFloat(simAmountInput.value);
-        const startYear = parseInt(simYearSelect.value);
-        const activeCategoryBtn = document.querySelector('.category-selector .category-btn.active');
-
-        if (!principal || !startYear || !activeCategoryBtn || principal < 1000) {
-            simResultBox.style.display = 'none'; // CHANGED: Use style.display instead of hidden
-            return;
+    // Chart config - dataset 0 = NIFTY, dataset 1 = userInvestment (starts hidden)
+    const initialUserData = YEARS.map(() => null);
+    const marketChart = new Chart(chartCtx, {
+      type: 'line',
+      data: {
+        labels: YEARS,
+        datasets: [
+          {
+            label: 'NIFTY 50 INDEX',
+            data: niftyData,
+            borderColor: 'rgba(8,83,183,0.95)',
+            backgroundColor: 'rgba(8,83,183,0.06)',
+            fill: true,
+            tension: 0.35,
+            borderWidth: 2,
+            pointBackgroundColor: (ctx) => highlightIndices.includes(ctx.dataIndex) ? 'rgba(255, 250, 99, 1)' : 'rgba(8,83,183,0.95)',
+            pointRadius: (ctx) => highlightIndices.includes(ctx.dataIndex) ? 6 : 3,
+            pointHoverRadius: 7,
+          },
+          {
+            label: 'Your investment',
+            data: initialUserData,
+            borderColor: 'rgba(255,99,132,0.95)',
+            backgroundColor: 'rgba(255,99,132,0.06)',
+            fill: false,
+            tension: 0.35,
+            borderWidth: 2,
+            pointBackgroundColor: (ctx) => (ctx.raw ? 'rgba(255,99,132,1)' : 'rgba(255,99,132,0.0)'),
+            pointRadius: (ctx) => (ctx.raw ? 4 : 0),
+            pointHoverRadius: 6,
+            hidden: true
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: { duration: 900, easing: 'easeOutQuart' },
+        interaction: { intersect: false, mode: 'index' },
+        plugins: {
+          legend: { position: 'top', labels: { boxWidth: 12, font: { family: "'Manrope', sans-serif", size: 12 } } },
+          tooltip: {
+            backgroundColor: '#0A2342',
+            titleFont: { family: "'Manrope', sans-serif", size: 13 },
+            bodyFont: { family: "'Manrope', sans-serif", size: 12 },
+            padding: 10,
+            cornerRadius: 8,
+            callbacks: {
+              label: (context) => {
+                const label = context.dataset.label || '';
+                const val = context.parsed?.y;
+                if (val == null || isNaN(val)) return `${label}: —`;
+                return label === 'NIFTY 50 INDEX' ? `${label}: ${Number(val).toLocaleString('en-IN')}` : `${label}: ${fmtINR(val)}`;
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            grid: { color: '#E5E7EB', borderDash: [5, 5] },
+            ticks: {
+              callback: (value) => (Math.abs(value) >= 1000 ? '₹' + Number(value).toLocaleString('en-IN', { maximumFractionDigits: 0 }) : value),
+              font: { family: "'Manrope', sans-serif" }
+            }
+          },
+          x: { grid: { display: false }, ticks: { font: { family: "'Manrope', sans-serif" } } }
         }
-
-        const cagr = parseFloat(activeCategoryBtn.dataset.cagr);
-        const years = 2025 - startYear;
-        const finalAmount = principal * Math.pow((1 + cagr), years);
-        const totalReturn = ((finalAmount - principal) / principal) * 100;
-
-        simFinalAmountEl.textContent = `₹${finalAmount.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`;
-        simTotalReturnEl.textContent = `${totalReturn.toFixed(1)}%`;
-        simCagrUsedEl.textContent = `${(cagr * 100).toFixed(0)}%`;
-        simResultBox.style.display = 'block'; // CHANGED: Use style.display instead of hidden
-    };
-
-    // FIXED: Category button event listeners
-    simCategoryButtons.forEach(button => {
-        button.addEventListener('click', (e) => {
-            e.preventDefault(); // ADDED: Prevent any default behavior
-            console.log('Category button clicked:', button.dataset.category); // ADDED: Debug logging
-            
-            simCategoryButtons.forEach(btn => {
-                btn.classList.remove('active');
-                btn.setAttribute('aria-checked', 'false');
-            });
-            button.classList.add('active');
-            button.setAttribute('aria-checked', 'true');
-            calculateGrowth();
-        });
+      }
     });
 
-    // FIXED: Input event listeners
+    // compute user's per-year series (lump-sum compound)
+    function computeUserSeries(principal, startYear, cagrDecimal) {
+      return YEARS.map(year => {
+        if (year < startYear) return null;
+        const yearsDiff = year - startYear;
+        const val = principal * Math.pow(1 + cagrDecimal, yearsDiff);
+        return isFinite(val) ? Math.round(val) : null;
+      });
+    }
+
+    function revealUserSeries(series) {
+      const ds = marketChart.data.datasets[1];
+      ds.data = series;
+      ds.hidden = false;
+      marketChart.update({ duration: 900, easing: 'easeOutQuart' });
+    }
+
+    function hideUserSeries() {
+      const ds = marketChart.data.datasets[1];
+      ds.data = YEARS.map(() => null);
+      ds.hidden = true;
+      marketChart.update({ duration: 300 });
+    }
+
+    /* Calculator handling integrated with chart */
+    function calculateGrowth() {
+      if (!simAmountInput || !simYearSelect || !simResultBox) return;
+      const principal = safeParseNumber(simAmountInput.value);
+      const startYear = parseInt(simYearSelect.value, 10);
+
+      // Scale NIFTY data baseline to match user input principal
+const scaledNiftyData = niftyData.map((val, idx) => {
+  if (YEARS[idx] < startYear) return null;
+  const scaleFactor = principal / niftyData[YEARS.indexOf(startYear)];
+  return Math.round(val * scaleFactor);
+});
+marketChart.data.datasets[0].data = scaledNiftyData;
+
+
+      // active category button
+      const activeBtn = document.querySelector('.category-selector .category-btn.active');
+      if (!activeBtn || !isFinite(principal) || principal < 1000 || !isFinite(startYear)) {
+        // hide results & user series
+        if (simResultBox) simResultBox.style.display = 'none';
+        hideUserSeries();
+        return;
+      }
+
+      const rawCagr = activeBtn.dataset.cagr;
+      const cagr = parseCagr(rawCagr);
+      if (!isFinite(cagr)) {
+        if (simResultBox) simResultBox.style.display = 'none';
+        hideUserSeries();
+        return;
+      }
+
+      const durationYears = CURRENT_YEAR - startYear;
+      if (durationYears < 0) {
+        if (simResultBox) simResultBox.style.display = 'none';
+        hideUserSeries();
+        return;
+      }
+
+      const finalAmount = principal * Math.pow(1 + cagr, durationYears);
+      const totalReturnPercent = ((finalAmount - principal) / principal) * 100;
+
+      if (simFinalAmountEl) simFinalAmountEl.textContent = fmtINR(Math.round(finalAmount));
+      if (simTotalReturnEl) simTotalReturnEl.textContent = `${totalReturnPercent.toFixed(1)}%`;
+      if (simCagrUsedEl) simCagrUsedEl.textContent = `${(cagr * 100).toFixed(2)}%`;
+      if (simResultBox) simResultBox.style.display = 'block';
+
+      // compute series and animate in
+      const userSeries = computeUserSeries(principal, startYear, cagr);
+      revealUserSeries(userSeries);
+      marketChart.update({ duration: 900, easing: 'easeOutQuart' });
+
+    }
+
+    // category buttons
+    simCategoryButtons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        simCategoryButtons.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-checked', 'false'); });
+        btn.classList.add('active');
+        btn.setAttribute('aria-checked', 'true');
+        calculateGrowth();
+      });
+    });
+
+    // inputs
     if (simAmountInput) {
-        simAmountInput.addEventListener('input', calculateGrowth);
-        simAmountInput.addEventListener('change', calculateGrowth); // ADDED: Also listen for change events
+      simAmountInput.addEventListener('input', () => calculateGrowth());
+      simAmountInput.addEventListener('change', () => calculateGrowth());
     }
-    if (simYearSelect) {
-        simYearSelect.addEventListener('change', calculateGrowth);
-    }
+    if (simYearSelect) simYearSelect.addEventListener('change', () => calculateGrowth());
 
-    // FIXED: Initial calculation with delay
+    // initial default
     setTimeout(() => {
-        if (simAmountInput && simAmountInput.value) {
-            calculateGrowth();
-        } else if (simAmountInput) {
-            // Set a default value if none exists
-            simAmountInput.value = '50000';
-            calculateGrowth();
-        }
-    }, 100); // ADDED: Small delay to ensure everything is loaded
-});
+      if (simAmountInput && !simAmountInput.value) simAmountInput.value = '10000';
+      // if a category already active, run calc
+      if (document.querySelector('.category-selector .category-btn.active')) calculateGrowth();
+    }, 150);
+  } // end chart block
 
-// JavaScript Countdown
-const targetDate = new Date("2026-08-20T10:00:00").getTime();
-
-function updateCountdown() {
-  const now = new Date().getTime();
-  const timeLeft = targetDate - now;
-
-  if (timeLeft <= 0) {
-    document.querySelector(".countdown").innerHTML = "We're Live!";
-    return;
+  /* =========================
+     Animated highlight number (when in viewport)
+     ========================= */
+  function animateNumberTo(el, start, end, ms = 1200, suffix = '') {
+    if (!el) return;
+    const frames = Math.round(ms / 16);
+    let frame = 0;
+    const step = (end - start) / frames;
+    let value = start;
+    const raf = () => {
+      frame++;
+      value += step;
+      if (frame >= frames) {
+        el.textContent = `${fmtINR(end)}${suffix}`;
+      } else {
+        el.textContent = `${fmtINR(Math.round(value))}${suffix}`;
+        requestAnimationFrame(raf);
+      }
+    };
+    requestAnimationFrame(raf);
   }
 
-  const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-
-  document.getElementById("days").innerText = days.toString().padStart(2, '0');
-  document.getElementById("hours").innerText = hours.toString().padStart(2, '0');
-  document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
-  document.getElementById("seconds").innerText = seconds.toString().padStart(2, '0');
-}
-
-setInterval(updateCountdown, 1000);
-updateCountdown();
-
-
-function animateValue(id, start, end, duration) {
-  const obj = document.getElementById(id);
-  const range = end - start;
-  const increment = end > start ? 1 : -1;
-  const stepTime = Math.abs(Math.floor(duration / range));
-  let current = start;
-  const timer = setInterval(() => {
-    current += increment;
-    obj.textContent = `₹${current.toLocaleString()}`;
-    if (current === end) {
-      clearInterval(timer);
-      obj.textContent += " LAKHS";
-    }
-  }, stepTime);
-}
-
-// Trigger animation only when visible
-function animateValue(id, start, end, duration) {
-  const obj = document.getElementById(id);
-  const frames = 30; // Smoothness (number of updates)
-  const step = (end - start) / frames;
-  let current = start;
-  let frame = 0;
-
-  const timer = setInterval(() => {
-    current += step;
-    frame++;
-    obj.textContent = `₹${current.toFixed(1)} LAKHS`; // 1 decimal place
-    if (frame >= frames) {
-      clearInterval(timer);
-      obj.textContent = `₹${end.toFixed(1)} LAKHS`; // Ensure final exact value
-    }
-  }, duration / frames);
-}
-
-// Trigger animation only when visible
-function isInViewport(el) {
-  const rect = el.getBoundingClientRect();
-  return rect.top >= 0 && rect.bottom <= (window.innerHeight || document.documentElement.clientHeight);
-}
-
-document.addEventListener("scroll", function() {
-  const el = document.getElementById("highlight-value");
-  if (isInViewport(el) && !el.dataset.animated) {
-    el.dataset.animated = true;
-    animateValue("highlight-value", 0, 15.8, 1600); 
+  function isInViewport(el) {
+    if (!el) return false;
+    const rect = el.getBoundingClientRect();
+    return rect.top < (window.innerHeight || document.documentElement.clientHeight) && rect.bottom > 0;
   }
-});
 
-// Simple hover effect to show goal name in console or future animation
-// document.querySelectorAll('.roadmap-item').forEach(item => {
-//   item.addEventListener('mouseenter', () => {
-//     console.log(`Goal: ${item.dataset.text}`);
-//   });
-// });
+  const highlightEl = document.getElementById('highlight-value');
+  let highlightAnimated = false;
+  document.addEventListener('scroll', () => {
+    if (highlightAnimated) return;
+    if (highlightEl && isInViewport(highlightEl)) {
+      highlightAnimated = true;
+      animateNumberTo(highlightEl, 0, 1580000, 1600, ''); // example: 15.8 L? (adjust based on your data)
+    }
+  }, { passive: true });
 
-// document.querySelectorAll('.opportunity-card').forEach(card => {
-//   card.addEventListener('click', () => {
-//     alert(`You clicked on ${card.querySelector('.opportunity-type').innerText} card`);
-//   });
-// });
+  // also check on load in case it's already visible
+  setTimeout(() => {
+    if (!highlightAnimated && highlightEl && isInViewport(highlightEl)) {
+      highlightAnimated = true;
+      animateNumberTo(highlightEl, 0, 1580000, 1600, '');
+    }
+  }, 300);
 
-//  document.querySelectorAll('.fomo-card').forEach(card => {
-//     card.addEventListener('click', () => {
-//       document.getElementById('fomoModal').style.display = 'flex';
-//     });
-//   });
+  /* =========================
+     End DOMContentLoaded
+     ========================= */
+}); // end DOMContentLoaded

@@ -291,11 +291,16 @@ section.visible { opacity: 1; transform: translateY(0);margin-top: 2px; }
   }
 
   .hero img {
-    max-width: 92%;
+    max-width: 100%;
     height: auto;
     margin: 10px auto 0;
     display: block;
   }
+
+  #heroImage {
+        width: 100% !important; /* or any width you want like 300px, 80%, etc. */
+        height: auto !important; /* maintains aspect ratio */
+    }
 }
 
 
@@ -1254,6 +1259,8 @@ section.visible { opacity: 1; transform: translateY(0);margin-top: 2px; }
     .hero-header {
         padding: 15px 0;
     }
+
+    
     
     .logo {
         font-size: 1.3rem;
@@ -1262,6 +1269,12 @@ section.visible { opacity: 1; transform: translateY(0);margin-top: 2px; }
     .cta-button {
         padding: 10px 20px;
         font-size: 0.8rem;
+        text-align: center;
+        display: block !important;
+        margin: 0 auto !important;
+        text-align: center !important;
+        width: fit-content !important;
+        float: none !important;
     }
     
     section {
@@ -1385,6 +1398,12 @@ section.visible { opacity: 1; transform: translateY(0);margin-top: 2px; }
         padding: 10px 20px;
         font-size: 0.9rem;
     }
+
+    .cta-button.hide-mobile {
+        display: none !important;
+    }
+
+    
 }
 
 @media (max-width: 360px) {

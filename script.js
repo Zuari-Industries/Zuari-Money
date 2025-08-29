@@ -6,27 +6,27 @@ const confirmationMessage = document.getElementById('confirmationMessage');
 // This event listener is attached directly to the form, so it can be outside DOMContentLoaded
 // --- ENHANCED DOWNLOAD WITH LEAD CAPTURE ---
 // --- FILE DOWNLOAD FUNCTIONALITY ---
-const downloadButton = document.getElementById('downloadKit');
-if (downloadButton) {
-    downloadButton.addEventListener('click', () => {
-        // Method 1: Direct file download (recommended)
-        const link = document.createElement('a');
-        link.href = 'assets/Zuari-Finserv-Mutual-Fund-Starter-Kit.pdf'; // Your file path
-        link.download = 'Zuari-Finserv-Mutual-Fund-Starter-Kit.pdf';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+// const downloadButton = document.getElementById('downloadKit');
+// if (downloadButton) {
+//     downloadButton.addEventListener('click', () => {
+//         // Method 1: Direct file download (recommended)
+//         const link = document.createElement('a');
+//         link.href = 'assets/Zuari-Finserv-Mutual-Fund-Starter-Kit.pdf'; // Your file path
+//         link.download = 'Zuari-Finserv-Mutual-Fund-Starter-Kit.pdf';
+//         document.body.appendChild(link);
+//         link.click();
+//         document.body.removeChild(link);
         
-        // Optional: Track download event
-        console.log('Starter Kit downloaded');
+//         // Optional: Track download event
+//         console.log('Starter Kit downloaded');
         
-        // Optional: Show success message
-        alert('Thank you! Your Mutual Fund Starter Kit is downloading now.');
+//         // Optional: Show success message
+//         alert('Thank you! Your Mutual Fund Starter Kit is downloading now.');
         
-        // Optional: Also open modal for lead capture
-        // openModal(); // Uncomment if you want to capture lead info after download
-    });
-}
+//         // Optional: Also open modal for lead capture
+//         // openModal(); // Uncomment if you want to capture lead info after download
+//     });
+// }
 
 
 if (leadForm) {

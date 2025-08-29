@@ -25,10 +25,11 @@
         <div class="container header-container">
             <div class="logo"><img src="images/ZMLogo.jpg"></div>
             <div class="header-buttons">
-                <button class="download-button" id="downloadKit">
-                    <i class="fas fa-download"></i> Start Today
-                </button>
-                <button class="cta-button">Get Free Investment Plan</button>
+                <a href="https://mf.zuarimoney.com/MFInvest/" target="_blank" class="download-button" id="downloadKit">
+                <i class="fa fa-arrow-right"></i> Invest Now
+                </a>
+
+                <button class="cta-button">Talk To Our Advisor</button>
             </div>
         </div>
     </header>
@@ -114,6 +115,8 @@
                     <button class="tab-button active" data-tab="large-cap">Large Cap</button>
                     <button class="tab-button" data-tab="flexi-cap">Flexi Cap</button>
                     <button class="tab-button" data-tab="elss">Small Cap</button>
+                    <button class="tab-button" data-tab="elss">Medium Cap</button>
+                    <button class="tab-button" data-tab="elss">Ultra short duration fund</button>
                 </div>
 
                 <!-- YELLOW BANNER ADDED HERE -->
@@ -124,7 +127,7 @@
                 <div id="large-cap" class="tab-content active">
                     <div class="table-container">
                         <table class="funds-table">
-                            <thead><tr><th>Fund Name</th><th>3Y Return (p.a.)</th><th>5Y Return (p.a.)</th><th>Since Inception (p.a.)</th></tr></thead>
+                            <thead><tr><th>Fund Name</th><th>3Y Return</th><th>5Y Return</th><th>10Y Return Return</th></tr></thead>
                             <tbody>
                                 <tr><td>ICICI Prudential Bluechip</td><td class="positive">22.3%</td><td class="positive">18.2%</td><td class="positive highlight"><i class="fas fa-star"></i> 17.5%</td></tr>
                                 <tr><td>SBI BlueChip Fund</td><td class="positive">21.1%</td><td class="positive">17.9%</td><td class="positive highlight"><i class="fas fa-star"></i> 15.8%</td></tr>
@@ -135,7 +138,7 @@
                 <div id="flexi-cap" class="tab-content">
                      <div class="table-container">
                         <table class="funds-table">
-                            <thead><tr><th>Fund Name</th><th>3Y Return (p.a.)</th><th>5Y Return (p.a.)</th><th>Since Inception (p.a.)</th></tr></thead>
+                            <thead><tr><th>Fund Name</th><th>3Y Return</th><th>5Y Return</th><th>10Y Return</th></tr></thead>
                             <tbody>
                                 <tr><td>Parag Parikh Flexi Cap</td><td class="positive">24.7%</td><td class="positive">23.8%</td><td class="positive highlight"><i class="fas fa-star"></i> 19.1%</td></tr>
                                 <tr><td>Quant Flexi Cap Fund</td><td class="positive">30.5%</td><td class="positive">33.5%</td><td class="positive highlight"><i class="fas fa-star"></i> 25.2%</td></tr>
@@ -146,7 +149,7 @@
                 <div id="elss" class="tab-content">
                      <div class="table-container">
                         <table class="funds-table">
-                            <thead><tr><th>Fund Name</th><th>3Y Return (p.a.)</th><th>5Y Return (p.a.)</th><th>Since Inception (p.a.)</th></tr></thead>
+                            <thead><tr><th>Fund Name</th><th>3Y Return</th><th>5Y Return</th><th>10Y Return</th></tr></thead>
                             <tbody>
                                 <tr><td>DSP Small Cap Fund</td><td class="positive">32.1%</td><td class="positive">34.5%</td><td class="positive highlight"><i class="fas fa-star"></i> 26.3%</td></tr>
                                 <tr><td>Bundhan Small Cap Fund</td><td class="positive">19.8%</td><td class="positive">17.1%</td><td class="positive highlight"><i class="fas fa-star"></i> 21.4%</td></tr>
@@ -154,6 +157,8 @@
                         </table>
                     </div>
                 </div>
+                
+
                 <div class="disclaimer">For informational purposes only. Past performance does not guarantee future returns. Mutual fund investments are subject to market risks.</div>
                 <!-- <div class="missed-opportunity-banner-blue">
                     <div class="missed-opportunity-title">
@@ -176,7 +181,7 @@
                     <!-- <h3>Your money could have become <strong style="font-size: 2.2rem;">2X</strong> in 3 years.</h3> -->
                      <h3>In Just 3 Years, Smart Investors Doubled Their Money. <span style="font-weight:bold; color:rgb(107, 247, 107);">The next 3 years could be yours.</span></h3>
                     <p style="color:rgba(255,255,255,0.8); margin-bottom:25px;">Based on the proven 3-year CAGR of select funds — the next 3 years could be even bigger. Are you in?</p>
-                    <button class="cta-button" style="background-color: var(--accent-color); color: var(--primary-color);">Get Free Wealth Plan →</button>
+                    <button class="cta-button" style="background-color: var(--accent-color); color: var(--primary-color);">Enquire Now →</button>
                 </div>
                 <div class="parallel-videos-container">
                     <!-- <div class="video-placeholder-small cta-button">
@@ -229,7 +234,8 @@
 
     <!-- Debt Card -->
     <div class="fomo-card" style="background: linear-gradient(135deg,#f7971e,#ffd200);">
-      <div class="fomo-icon">💰</div>
+      <div class="fomo-icon">₹</div>
+
       <h2 style="color: white;">Debt</h2>
       <p style="color: white;font-size: 2.0rem;"><b>₹1 lakh → ₹1.34 lakh (+34%)</b></p>
       <h3 style="color: white;">Steady wins the race</h3>
@@ -259,6 +265,7 @@
                         <button class="category-btn active" role="radio" aria-checked="true" data-cagr="0.10" data-category="Large Cap">Large Cap</button>
                         <button class="category-btn" role="radio" aria-checked="false" data-cagr="0.14" data-category="Mid Cap">Mid Cap</button>
                         <button class="category-btn" role="radio" aria-checked="false" data-cagr="0.18" data-category="Small Cap">Small Cap</button>
+                        
                     </div>
 
                     <div class="simulator-inputs">

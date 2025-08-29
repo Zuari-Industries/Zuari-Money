@@ -41,6 +41,7 @@ p { color: var(--text-light); line-height: 1.7; }
     border: none;
     cursor: pointer;
     display: inline-block;
+    font-family: 'Manrope', sans-serif;
 }
 .cta-button-center{
     margin-top: -14px;

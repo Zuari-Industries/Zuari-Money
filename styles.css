@@ -2117,5 +2117,70 @@ section.visible { opacity: 1; transform: translateY(0);margin-bottom: 0px; }
 }
 
 
+/* @media (max-width: 768px) {
+  .section-title + p {
+    text-align: center;
+  }
+} */
+
+/* Wrapper around the scrollable table */
+.table-wrapper {
+  position: relative;
+}
+
+/* Scrollable container */
+.table-container {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch; /* smooth momentum on iOS */
+  scroll-snap-type: x mandatory;     /* snap scrolling */
+}
+
+/* Snap alignment for columns */
+.table-container table th,
+.table-container table td {
+  scroll-snap-align: start;
+}
+
+/* Thicker, colored scrollbar */
+.table-container::-webkit-scrollbar {
+  height: 10px; /* thicker */
+}
+.table-container::-webkit-scrollbar-track {
+  background: #f0f0f0; /* light grey track */
+  border-radius: 6px;
+}
+.table-container::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #4facfe, #00f2fe); /* blue gradient */
+  border-radius: 6px;
+}
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #2196f3, #00bcd4); /* stronger blue */
+}
+
+/* Bold gradient fades */
+.table-wrapper::before,
+.table-wrapper::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50px;          /* wider for stronger effect */
+  pointer-events: none;
+  z-index: 2;
+}
+
+.table-wrapper::before {
+  left: 0;
+  background: linear-gradient(to right, rgba(79, 172, 254, 0.9) 40%, transparent);
+}
+
+.table-wrapper::after {
+  right: 0;
+  background: linear-gradient(to left, rgba(79, 172, 254, 0.9) 40%, transparent);
+}
+
+
+
 
 

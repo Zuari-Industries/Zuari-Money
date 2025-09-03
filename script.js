@@ -487,15 +487,15 @@ marketChart.data.datasets[0].data = scaledNiftyData;
 }); // end DOMContentLoaded
 
 
-const scrollHint = document.querySelector('.scroll-hint');
+// const scrollHint = document.querySelector('.scroll-hint');
 
-document.querySelectorAll('.table-container').forEach(container => {
-  container.addEventListener('scroll', () => {
-    if (container.scrollLeft > 10) {
-      scrollHint.style.display = 'none';
-    }
-  });
-});
+// document.querySelectorAll('.table-container').forEach(container => {
+//   container.addEventListener('scroll', () => {
+//     if (container.scrollLeft > 10) {
+//       scrollHint.style.display = 'none';
+//     }
+//   });
+// });
 
 
 

@@ -2306,7 +2306,7 @@ section.visible { opacity: 1; transform: translateY(0);margin-bottom: 0px; }
   }
   
   .funds-table td:nth-child(1) {
-    font-size: 0.65rem;
+    font-size: 0.9rem;
      font-weight: 700; /* or bold */
     color: #ffffff; /* darker color for contrast */
     text-shadow: 0 1px 2px rgba(0,0,0,0.1); /* subtle shadow */

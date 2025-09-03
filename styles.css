@@ -2123,63 +2123,257 @@ section.visible { opacity: 1; transform: translateY(0);margin-bottom: 0px; }
   }
 } */
 
-/* Wrapper around the scrollable table */
+
+
+
+
 .table-wrapper {
-  position: relative;
+  position: relative; /* anchor for the arrow */
 }
 
-/* Scrollable container */
-.table-container {
-  overflow-x: auto;
-  overflow-y: hidden;
-  -webkit-overflow-scrolling: touch; /* smooth momentum on iOS */
-  scroll-snap-type: x mandatory;     /* snap scrolling */
-}
-
-/* Snap alignment for columns */
-.table-container table th,
-.table-container table td {
-  scroll-snap-align: start;
-}
-
-/* Thicker, colored scrollbar */
-.table-container::-webkit-scrollbar {
-  height: 10px; /* thicker */
-}
-.table-container::-webkit-scrollbar-track {
-  background: #f0f0f0; /* light grey track */
-  border-radius: 6px;
-}
-.table-container::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #4facfe, #00f2fe); /* blue gradient */
-  border-radius: 6px;
-}
-.table-container::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #2196f3, #00bcd4); /* stronger blue */
-}
-
-/* Bold gradient fades */
-.table-wrapper::before,
 .table-wrapper::after {
-  content: "";
+  content: "➜";
   position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 50px;          /* wider for stronger effect */
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 28px;
+  font-weight: bold;
+  color: #fff; /* white for dark backgrounds */
+  text-shadow: 0 0 6px rgba(0, 242, 254, 0.8); /* glowing effect */
+  z-index: 20;
+  animation: bounce 1.2s infinite;
   pointer-events: none;
-  z-index: 2;
 }
 
-.table-wrapper::before {
-  left: 0;
-  background: linear-gradient(to right, rgba(79, 172, 254, 0.9) 40%, transparent);
+@keyframes bounce {
+  0%, 100% { transform: translateY(-50%) translateX(0); }
+  50% { transform: translateY(-50%) translateX(6px); }
 }
 
-.table-wrapper::after {
-  right: 0;
-  background: linear-gradient(to left, rgba(79, 172, 254, 0.9) 40%, transparent);
+
+/* ========================================
+   MOBILE RESPONSIVE TABLE TO CARD LAYOUT
+   Add this CSS at the end of your existing CSS file
+======================================== */
+
+@media screen and (max-width: 768px) {
+  
+  /* Hide table headers on mobile */
+  .funds-table thead {
+    display: none;
+  }
+  
+  /* Transform table structure */
+  .funds-table,
+  .funds-table tbody,
+  .funds-table tr,
+  .funds-table td {
+    display: block;
+  }
+  
+  /* Card styling for each row */
+  .funds-table tr {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    margin-bottom: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+  
+  /* Hover effect for cards */
+  .funds-table tr:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+  
+  /* Individual cell styling */
+  .funds-table td {
+    border: none;
+    padding: 8px 0;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  
+  /* Remove border from last cell */
+  .funds-table td:last-child {
+    border-bottom: none;
+  }
+  
+  /* Add labels before each data cell */
+  .funds-table td:nth-child(1):before { content: "Fund Name: "; }
+  .funds-table td:nth-child(2):before { content: "3Y Return: "; }
+  .funds-table td:nth-child(3):before { content: "5Y Return: "; }
+  .funds-table td:nth-child(4):before { content: "10Y Return: "; }
+  
+  /* Style the labels */
+  .funds-table td:before {
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    min-width: 100px;
+    flex-shrink: 0;
+  }
+  
+  /* Fund name styling (first cell) */
+  .funds-table td:nth-child(1) {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #fff;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .funds-table td:nth-child(1):before {
+    margin-bottom: 4px;
+    font-size: 0.8rem;
+    opacity: 0.6;
+  }
+  
+  /* Return values styling */
+  .funds-table td.positive {
+    font-weight: 600;
+    font-size: 1rem;
+  }
+  
+  /* Adjust container padding for mobile */
+  .table-container {
+    padding: 0 10px;
+    overflow: visible;
+  }
+  
+  /* Section title responsive */
+  .fund-explorer-section .section-title {
+    font-size: 1.8rem;
+    line-height: 1.3;
+  }
+  
+  .fund-explorer-section .section-subtitle {
+    font-size: 1rem;
+    margin-bottom: 30px;
+  }
+  
+  /* Tabs responsive */
+  .tabs-nav {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .tab-button {
+    font-size: 0.85rem;
+    padding: 8px 12px;
+    flex: 1 1 auto;
+    min-width: 120px;
+  }
+  
+  /* CTA section responsive */
+  .fund-cta-outro h3 {
+    font-size: 1.4rem;
+    line-height: 1.4;
+  }
+  
+  .fund-cta-outro p {
+    font-size: 0.95rem;
+  }
+  
+  .cta-button {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.1rem;
+  }
 }
 
+/* Extra small devices (phones in portrait) */
+@media screen and (max-width: 480px) {
+  
+  .funds-table tr {
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  
+  .funds-table td:before {
+    min-width: 90px;
+    font-size: 0.85rem;
+  }
+  
+  .funds-table td:nth-child(1) {
+    font-size: 0.65rem;
+     font-weight: 700; /* or bold */
+    color: #ffffff; /* darker color for contrast */
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1); /* subtle shadow */
+    
+  }
+  
+  .fund-explorer-section .section-title {
+    font-size: 1.5rem;
+  }
+  
+  .tab-button {
+    font-size: 0.8rem;
+    padding: 6px 10px;
+    min-width: 100px;
+  }
+}
+
+/* ========================================
+   ALTERNATIVE COMPACT CARD LAYOUT
+   Uncomment this section if you prefer a more compact card design
+======================================== */
+
+/*
+@media screen and (max-width: 768px) {
+  
+  .funds-table thead { display: none; }
+  
+  .funds-table, .funds-table tbody, .funds-table tr, .funds-table td {
+    display: block;
+  }
+  
+  .funds-table tr {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+    border-left: 4px solid var(--accent-color);
+    border-radius: 8px;
+    margin-bottom: 12px;
+    padding: 16px;
+  }
+  
+  .funds-table td {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 6px 0;
+    border: none;
+  }
+  
+  .funds-table td:nth-child(1) {
+    grid-column: 1 / -1;
+    font-weight: 700;
+    color: var(--accent-color);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+  }
+  
+  .funds-table td:nth-child(1):before { content: ""; }
+  .funds-table td:nth-child(2):before { content: "3Y: "; }
+  .funds-table td:nth-child(3):before { content: "5Y: "; }
+  .funds-table td:nth-child(4):before { content: "10Y: "; }
+  
+  .funds-table td:before {
+    font-weight: 600;
+    opacity: 0.8;
+  }
+}
+*/
 
 
 

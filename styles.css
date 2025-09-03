@@ -2087,9 +2087,14 @@ section.visible { opacity: 1; transform: translateY(0);margin-bottom: 0px; }
 }
 
 
+
+.scroll-hint {
+  display: none;
+}
 /* Show only on small screens */
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   .scroll-hint {
+  display: inline-block;  
   position: absolute;
   right: 12px;
   top: 511px;

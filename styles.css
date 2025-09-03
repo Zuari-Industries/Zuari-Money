@@ -2377,6 +2377,46 @@ section.visible { opacity: 1; transform: translateY(0);margin-bottom: 0px; }
 
 
 
+/* Mobile-specific styles for compounding section */
+@media (max-width: 768px) {
+    .compounding-section .two-column-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 10px; /* optional, adds uniform spacing between all children */
+    }
+    
+    /* Make all elements direct children of the flex container */
+    .compounding-section .column-text {
+        display: contents; /* keeps children as direct children */
+    }
+    
+    /* Order the elements */
+    .compounding-section .column-text h2 {
+        order: 1;
+        margin-bottom: 10px; /* reduced from 15px */
+    }
+    
+    .compounding-section .column-text p:first-of-type {
+        order: 2;
+        margin-bottom: 10px; /* reduced from 20px */
+    }
+    
+    .compounding-section .compounding-graph {
+        order: 3;
+        margin: 15px 0; /* reduced from 20px */
+    }
+    
+    .compounding-section .column-text p:last-of-type {
+        order: 4;
+        margin-bottom: 10px; /* reduced from 20px */
+    }
+    
+    .compounding-section .column-text .cta-button {
+        order: 5;
+        margin-top: 0;
+        align-self: flex-start;
+    }
+}
 
 
 

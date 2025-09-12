@@ -11,50 +11,89 @@ document.addEventListener('DOMContentLoaded', () => {
   /* =========================
      Config / helpers
      ========================= */
-  const START_YEAR = 2015;
-  const CURRENT_YEAR = new Date().getFullYear();
-  const YEARS = Array.from({ length: CURRENT_YEAR - START_YEAR + 1 }, (_, i) => START_YEAR + i);
+const START_YEAR = 2015;
+const CURRENT_YEAR = new Date().getFullYear();
 
-  const baseNiftySamples = [10000, 11000, 12500, 13000, 15000, 14000, 18000, 21000, 20000, 24000, 25000]; // 2015..2025 seed
+// Dropdown years: 2015 .. CURRENT_YEAR-1
+const YEARS = Array.from(
+  { length: (CURRENT_YEAR - 1) - START_YEAR + 1 },
+  (_, i) => START_YEAR + i
+);
 
-  const fmtINR = (v) => '₹' + Number(v).toLocaleString('en-IN', { maximumFractionDigits: 0 });
-  const safeParseNumber = (str) => {
-    if (typeof str === 'number') return Number(str);
-    if (!str && str !== 0) return NaN;
-    // allow comma separators
-    return parseFloat(String(str).replace(/,/g, '').trim());
-  };
-  const parseCagr = (v) => {
-    if (v == null) return NaN;
-    let s = String(v).trim();
-    if (s.endsWith('%')) s = s.slice(0, -1);
-    const n = safeParseNumber(s);
-    if (!isFinite(n)) return NaN;
-    // convert percent like "10" -> 0.10; if already decimal (0.10) keep as is
-    if (n > 1) return n / 100;
-    return n;
-  };
+// Graph years: 2015 .. CURRENT_YEAR + 2 (EXTENDED to include future years)
+const YEARS_GRAPH = Array.from(
+  { length: CURRENT_YEAR + 2 - START_YEAR + 1 },
+  (_, i) => START_YEAR + i
+);
 
-  function buildNiftyData(years, seedArray) {
-    // returns array length === years.length
-    const result = seedArray.slice();
-    if (result.length >= years.length) return result.slice(0, years.length).map(Math.round);
-    // extend by approximating last growth rate
-    let last = result[result.length - 1] || 10000;
-    const prev = result[result.length - 2] || last;
-    let approxCagr = prev > 0 ? (last / prev) - 1 : 0.08;
-    if (!isFinite(approxCagr) || approxCagr <= -1) approxCagr = 0.08;
-    while (result.length < years.length) {
-      last = last * (1 + approxCagr);
-      result.push(Math.round(last));
-    }
-    return result.map(Math.round);
+const baseNiftySamples = [
+  10000, 11000, 12500, 13000, 15000, 14000, 18000, 21000, 20000, 24000, 25000, 27000, 29160
+]; // 2015..2027 seed (ADDED 2026, 2027 data)
+
+const fmtINR = (v) => '₹' + Number(v).toLocaleString('en-IN', { maximumFractionDigits: 0 });
+
+const safeParseNumber = (str) => {
+  if (typeof str === 'number') return Number(str);
+  if (!str && str !== 0) return NaN;
+  return parseFloat(String(str).replace(/,/g, '').trim());
+};
+
+const parseCagr = (v) => {
+  if (v == null) return NaN;
+  let s = String(v).trim();
+  if (s.endsWith('%')) s = s.slice(0, -1);
+  const n = safeParseNumber(s);
+  if (!isFinite(n)) return NaN;
+  if (n > 1) return n / 100;
+  return n;
+};
+
+function buildNiftyData(years, seedArray) {
+  const result = seedArray.slice();
+  if (result.length >= years.length) return result.slice(0, years.length).map(Math.round);
+  
+  let last = result[result.length - 1] || 10000;
+  const prev = result[result.length - 2] || last;
+  let approxCagr = prev > 0 ? last / prev - 1 : 0.08;
+  if (!isFinite(approxCagr) || approxCagr <= -1) approxCagr = 0.08;
+  
+  while (result.length < years.length) {
+    last = last * (1 + approxCagr);
+    result.push(Math.round(last));
   }
+  
+  return result.map(Math.round);
+}
 
-  function computeHighlightIndices(years, highlights = [2019, 2022, CURRENT_YEAR]) {
-    return highlights.map(y => years.indexOf(y)).filter(i => i >= 0);
+// ✅ THE ONLY REAL FIX YOU NEED
+function getGraphYears(startYear) {
+  // Force minimum 3 years for any selection
+  const minEndYear = startYear + 2; // Always show 3 years minimum
+  const actualEndYear = Math.max(minEndYear, CURRENT_YEAR);
+  
+  const years = [];
+  for (let year = startYear; year <= actualEndYear; year++) {
+    years.push(year);
   }
+  
+  return years;
+}
 
+function computeHighlightIndices(years, highlights = [2019, 2022, CURRENT_YEAR]) {
+  return highlights.map((y) => years.indexOf(y)).filter((i) => i >= 0);
+}
+
+// --- Test it ---
+console.log("Testing 2024:", getGraphYears(2024)); // Should show [2024, 2025, 2026]
+console.log("Testing 2025:", getGraphYears(2025)); // Should show [2025, 2026, 2027]
+
+const selectedStartYear = 2024;
+const graphYears = getGraphYears(selectedStartYear);
+const graphData = buildNiftyData(graphYears, baseNiftySamples);
+
+console.log('Graph Years:', graphYears);
+console.log('Graph Data:', graphData);
+console.log('Points:', graphData.length);
   /* =========================
      Element references
      ========================= */
@@ -139,14 +178,14 @@ if (leadForm) {
         submitButton.textContent = 'Submitting...';
       }
 
-      // fire-and-forget request (don’t block UI for response)
+      // fire-and-forget request (don't block UI for response)
       fetch('/api/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, phone })
       }).catch(err => console.error("Lead submit failed:", err));
 
-      // immediately show confirmation (don’t wait for server)
+      // immediately show confirmation (don't wait for server)
       if (formContainer && confirmationMessage) {
         formContainer.style.display = 'none';
         confirmationMessage.style.display = 'block';
@@ -245,9 +284,9 @@ if (leadForm) {
   } else {
     const chartCtx = chartCanvas.getContext('2d');
 
-    // build NIFTY data to match YEARS
-    const niftyData = buildNiftyData(YEARS, baseNiftySamples);
-    const highlightIndices = computeHighlightIndices(YEARS);
+    // build NIFTY data to match YEARS_GRAPH (FIXED)
+    const niftyData = buildNiftyData(YEARS_GRAPH, baseNiftySamples);
+    const highlightIndices = computeHighlightIndices(YEARS_GRAPH);
 
     // Prepare year select inclusive
     if (simYearSelect) {
@@ -262,11 +301,11 @@ if (leadForm) {
     }
 
     // Chart config - dataset 0 = NIFTY, dataset 1 = userInvestment (starts hidden)
-    const initialUserData = YEARS.map(() => null);
+    const initialUserData = YEARS_GRAPH.map(() => null);
     const marketChart = new Chart(chartCtx, {
       type: 'line',
       data: {
-        labels: YEARS,
+        labels: YEARS_GRAPH, // Use YEARS_GRAPH instead of YEARS
         datasets: [
           {
             label: 'NIFTY 50 INDEX',
@@ -331,9 +370,9 @@ if (leadForm) {
       }
     });
 
-    // compute user's per-year series (lump-sum compound)
+    // compute user's per-year series (lump-sum compound) - FIXED
     function computeUserSeries(principal, startYear, cagrDecimal) {
-      return YEARS.map(year => {
+      return YEARS_GRAPH.map(year => { // Use YEARS_GRAPH instead of YEARS
         if (year < startYear) return null;
         const yearsDiff = year - startYear;
         const val = principal * Math.pow(1 + cagrDecimal, yearsDiff);
@@ -350,7 +389,7 @@ if (leadForm) {
 
     function hideUserSeries() {
       const ds = marketChart.data.datasets[1];
-      ds.data = YEARS.map(() => null);
+      ds.data = YEARS_GRAPH.map(() => null); // Use YEARS_GRAPH instead of YEARS
       ds.hidden = true;
       marketChart.update({ duration: 300 });
     }
@@ -361,14 +400,16 @@ if (leadForm) {
       const principal = safeParseNumber(simAmountInput.value);
       const startYear = parseInt(simYearSelect.value, 10);
 
-      // Scale NIFTY data baseline to match user input principal
-const scaledNiftyData = niftyData.map((val, idx) => {
-  if (YEARS[idx] < startYear) return null;
-  const scaleFactor = principal / niftyData[YEARS.indexOf(startYear)];
-  return Math.round(val * scaleFactor);
-});
-marketChart.data.datasets[0].data = scaledNiftyData;
-
+      // Scale NIFTY data baseline to match user input principal - FIXED
+      const startYearIndex = YEARS_GRAPH.indexOf(startYear);
+      if (startYearIndex >= 0) {
+        const scaledNiftyData = niftyData.map((val, idx) => {
+          if (YEARS_GRAPH[idx] < startYear) return null;
+          const scaleFactor = principal / niftyData[startYearIndex];
+          return Math.round(val * scaleFactor);
+        });
+        marketChart.data.datasets[0].data = scaledNiftyData;
+      }
 
       // active category button
       const activeBtn = document.querySelector('.category-selector .category-btn.active');
@@ -496,7 +537,3 @@ marketChart.data.datasets[0].data = scaledNiftyData;
 //     }
 //   });
 // });
-
-
-
-
